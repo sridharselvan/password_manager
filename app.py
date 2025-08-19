@@ -50,7 +50,6 @@ unlock_button.grid(row=1, column=2, padx=(10, 40), sticky="w")
 stored_header = tk.Label(root, text="Stored Credentials table", font=stored_header_font)
 stored_header.grid(row=2, column=0, columnspan=3, pady=40, sticky="n")
 
-
 # Header Row
 headers = ["Website", "Username", "Password", "Copy", "Reveal"]
 for col, header in enumerate(headers):
@@ -94,5 +93,12 @@ def create_row(row_index, website, username, password_plain):
 # Create data rows
 for idx, entry in enumerate(data, start=4):
     create_row(idx, entry["website"], entry["username"], entry["password"])
+
+row_index = len(data) + 4
+add_button = tk.Button(root, text="[+] Add New Entry", font=button_font)
+add_button.grid(row=row_index, column=1, columnspan=1, padx=15, pady=15)
+
+exit_button = tk.Button(root, text="Exit", font=button_font, command=root.destroy)
+exit_button.grid(row=row_index, column=1, padx=15, pady=15, sticky='e')
 
 root.mainloop()

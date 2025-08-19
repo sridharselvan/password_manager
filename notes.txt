@@ -46,7 +46,7 @@ Main Window:
 |                Stored Credentials Table             |
 |  Website | Username | ******** | [Copy] [Reveal]    |
 |-----------------------------------------------------|
-| [+] Add New Entry | [💾 Save Vault] | [Exit]         |
+| [+] Add New Entry | [Exit] |
 +-----------------------------------------------------+
 
 Add Entry Popup:
