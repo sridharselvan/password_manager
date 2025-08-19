@@ -1,0 +1,103 @@
+===========================================
+OFFLINE PASSWORD MANAGER — DESIGN DOCUMENT
+===========================================
+
+📌 PROJECT GOAL:
+Build a lightweight, offline password manager using Python and Tkinter that securely stores and retrieves encrypted login credentials locally.
+
+-------------------------------------------
+🎯 USE CASE
+-------------------------------------------
+User: Security-conscious individual who:
+- Does not trust cloud-based password managers
+- Wants full control over their credential storage
+- Needs a lightweight desktop app for daily use
+
+-------------------------------------------
+🧩 FEATURES
+-------------------------------------------
+1. Add new credentials
+2. Store credentials securely (encrypted)
+3. Decrypt vault after entering master password
+4. Search or filter stored entries
+5. Copy username/password to clipboard
+6. Automatically clear clipboard after timeout
+7. No cloud storage – all local
+8. Optional password generator
+
+-------------------------------------------
+🔐 SECURITY DESIGN
+-------------------------------------------
+• Encryption: AES encryption via Fernet (symmetric encryption)
+• Master Key: Derived from master password or stored securely in a local key file
+• Vault File: Encrypted JSON stored as `vault.dat`
+• Clipboard: Passwords copied are cleared after 10 seconds
+• No unencrypted credentials are stored on disk
+
+-------------------------------------------
+🪟 UI LAYOUT (Tkinter)
+-------------------------------------------
+Main Window:
++-----------------------------------------------------+
+|             Offline Password Manager               |
++-----------------------------------------------------+
+| [ Unlock Vault ]     [ 🔒 Enter Master Password ]   |
++-----------------------------------------------------+
+|                Stored Credentials Table             |
+|  Website | Username | ******** | [Copy] [Reveal]    |
+|-----------------------------------------------------|
+| [+] Add New Entry | [💾 Save Vault] | [Exit]         |
++-----------------------------------------------------+
+
+Add Entry Popup:
+[Website]: example.com
+[Username]: john.doe
+[Password]: ********
+[Generate Password] [Save Entry]
+
+-------------------------------------------
+📂 FILE STRUCTURE
+-------------------------------------------
+password_manager/
+├── app.py                 # Main app file (tkinter GUI)
+├── encryption.py          # Encryption/decryption logic
+├── vault.dat              # Encrypted password vault
+├── key.key (optional)     # Stored encryption key (secured)
+└── README.md              # Documentation
+
+-------------------------------------------
+📦 DEPENDENCIES
+-------------------------------------------
+- Python 3.x
+- tkinter (for GUI)
+- cryptography (for Fernet AES encryption)
+- pyperclip (for clipboard handling, optional)
+
+Install via pip:
+> pip install cryptography pyperclip
+
+-------------------------------------------
+🧪 EXAMPLE SCENARIOS
+-------------------------------------------
+• User unlocks the vault with master password
+• Adds a new login for github.com
+• Clicks “Copy” to copy password (auto-clears in 10 sec)
+• Data is saved locally in an encrypted file
+• No internet or cloud interaction required
+
+-------------------------------------------
+⚠️ SECURITY NOTES
+-------------------------------------------
+• Never hardcode encryption keys
+• Require strong master passwords
+• Vault file should be manually backed up
+• Passwords should be hidden by default (mask input)
+
+-------------------------------------------
+🛠️ EXTENSIONS (Future ideas)
+-------------------------------------------
+• Password strength indicator
+• Auto-lock after idle time
+• Multi-user support
+• Export to encrypted backup
+• Key file + password combo login (2-factor)
