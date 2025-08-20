@@ -101,3 +101,15 @@ Install via pip:
 • Multi-user support
 • Export to encrypted backup
 • Key file + password combo login (2-factor)
+
+5. Missing features for usability
+
+You're building a great base. Consider adding:
+
+🔍 Search/filter bar
+
+✏️ Edit and ❌ Delete buttons per row
+
+➕ Add new credentials form
+
+🗂️ Saving/loading data to a file (e.g., JSON)
