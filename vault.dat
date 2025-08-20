@@ -1,0 +1,22 @@
+[
+    {
+        "website": "example.com",
+        "username": "john_doe",
+        "password": "MySecurePass123"
+    },
+    {
+        "website": "gmail.com",
+        "username": "jane123",
+        "password": "Another$ecret"
+    },
+    {
+        "website": "github.com",
+        "username": "coder007",
+        "password": "Code@2023"
+    },
+    {
+        "website": "outlook.com",
+        "username": "testmail",
+        "password": "mail@2023"
+    }
+]

@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+import json
 
 class PasswordManager:
     """
@@ -41,6 +42,7 @@ class PasswordManager:
 
         self.password_labels = {}
         self.reveal_buttons = {}
+        self.filename = 'vault.dat'
 
     def main(self):
         """
@@ -95,7 +97,21 @@ class PasswordManager:
             messagebox.showerror("Error", "Please enter your master password")
             return
         
-        self.credentials_table_custom()
+        if self.read_vault_data():
+            self.credentials_table_custom()
+
+    def read_vault_data(self):
+        try:
+            with open(self.filename, "r") as file:
+                self.data = json.load(file)
+                return True
+        except FileNotFoundError:
+            messagebox.showerror("Error", f"Error: {self.filename} file not found.")
+        except json.JSONDecodeError:
+            messagebox.showerror("Error", f"Error: Failed to decode JSON from {self.filename}.")
+        except Exception as e:
+            messagebox.showerror("Error", f"An unexpected error occurred: {e}")
+        return False
 
     def credentials_table_custom(self):
         self.headers = ['Website', 'Username', 'Password', 'Actions']
@@ -119,11 +135,6 @@ class PasswordManager:
             self.add_vertical_separator(col, 0)
 
     def generate_table_data(self):
-        self.data = [
-            {"website": "example.com", "username": "john_doe", "password": "MySecurePass123"},
-            {"website": "gmail.com", "username": "jane123", "password": "Another$ecret"},
-            {"website": "github.com", "username": "coder007", "password": "Code@2023"},
-        ]
         for row_idx, row in enumerate(self.data, start=1):
             for col_index, key in enumerate(row):
                 value = row[key]
@@ -140,12 +151,11 @@ class PasswordManager:
             self.add_copy_button(row_idx)
 
     def add_reveal_button(self, row_idx):
-        actions_start_col = len(self.headers) * 2
         self.reveal_button = ttk.Button(self.table_container,
                                         text="Show",
                                         cursor="hand2",
                                         command=lambda r=row_idx: self.toggle_password(r))
-        self.reveal_button.grid(row=row_idx, column=actions_start_col, sticky="nsew", padx=5, pady=5)
+        self.reveal_button.grid(row=row_idx, column=6, sticky="nsew", padx=5, pady=5)
         self.reveal_buttons[row_idx] = self.reveal_button
 
     def toggle_password(self, row_idx):
@@ -160,12 +170,11 @@ class PasswordManager:
             button.config(text="Show")
 
     def add_copy_button(self, row_idx):
-        actions_start_col = (len(self.headers) * 2) + 1
         button = ttk.Button(self.table_container,
                             text="Copy",
                             cursor="hand2",
                             command=lambda r=row_idx: self.copy_password(r))
-        button.grid(row=row_idx, column=actions_start_col, sticky="nsew", padx=5, pady=5)
+        button.grid(row=row_idx, column=7, sticky="nsew", padx=5, pady=5)
 
     def copy_password(self, row_idx):
         _, actual_password = self.password_labels[row_idx]
