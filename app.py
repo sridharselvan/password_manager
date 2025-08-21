@@ -147,15 +147,16 @@ class PasswordManager:
                 if key == 'password':
                     self.password_labels[row_idx] = (data_label, value)
                 self.add_vertical_separator(col_index, row_idx)
-            self.add_reveal_button(row_idx)
-            self.add_copy_button(row_idx)
+            self.add_reveal_button(row_idx, col_index)
+            self.add_copy_button(row_idx, col_index)
 
-    def add_reveal_button(self, row_idx):
+    def add_reveal_button(self, row_idx, col_index):
         self.reveal_button = ttk.Button(self.table_container,
                                         text="Show",
                                         cursor="hand2",
                                         command=lambda r=row_idx: self.toggle_password(r))
-        self.reveal_button.grid(row=row_idx, column=6, sticky="nsew", padx=5, pady=5)
+        reveal_btn_col = len(self.headers) + col_index
+        self.reveal_button.grid(row=row_idx, column=reveal_btn_col, sticky="nsew", padx=5, pady=5)
         self.reveal_buttons[row_idx] = self.reveal_button
 
     def toggle_password(self, row_idx):
@@ -169,12 +170,13 @@ class PasswordManager:
             label.config(text="******")
             button.config(text="Show")
 
-    def add_copy_button(self, row_idx):
+    def add_copy_button(self, row_idx, col_index):
         button = ttk.Button(self.table_container,
                             text="Copy",
                             cursor="hand2",
                             command=lambda r=row_idx: self.copy_password(r))
-        button.grid(row=row_idx, column=7, sticky="nsew", padx=5, pady=5)
+        btn_col = (len(self.headers) + col_index) + 1
+        button.grid(row=row_idx, column=btn_col, sticky="nsew", padx=5, pady=5)
 
     def copy_password(self, row_idx):
         _, actual_password = self.password_labels[row_idx]
