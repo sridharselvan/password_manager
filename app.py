@@ -31,14 +31,15 @@ class PasswordManager:
         self.root.minsize(600, 400)
 
         # Configure grid columns to manage resizing
-        self.root.grid_columnconfigure(0, weight=1)
-        self.root.grid_columnconfigure(1, weight=0)
-        self.root.grid_columnconfigure(2, weight=1)
+        for i in range(3):
+            self.root.grid_columnconfigure(i, weight=1)
+
 
         # Define fonts centrally
-        self.font_header = ('Arial', 24, 'bold')
-        self.font_label = ('Arial', 16, 'bold')
-        self.font_entry = ('Arial', 16)
+        self.font_header = ('Segoe UI', 28, 'bold')
+        self.font_label = ('Segoe UI', 14, 'bold')
+        self.font_entry = ('Segoe UI', 14)
+
 
         self.password_labels = {}
         self.reveal_buttons = {}
@@ -49,6 +50,7 @@ class PasswordManager:
         Build the UI components and start the Tkinter event loop.
         """
         self.header()
+        self.add_new_section()
         self.master_password_section()
         self.run_main_event()
 
@@ -56,36 +58,32 @@ class PasswordManager:
         """
         Create and place the header label on the window.
         """
-        header = tk.Label(self.root,
-                          text='Password Manager',
-                          font=self.font_header,
-                          padx=15,
-                          pady=15
-                          )
-        header.grid(row=0, column=0, columnspan=3, pady=(40, 20), sticky="")
+        header = tk.Label(
+            self.root,
+            text='🔐 Password Manager',
+            font=self.font_header,
+            bg="#2c3e50",
+            fg="#ecf0f1",
+            pady=20
+        )
+        header.grid(row=0, column=0, columnspan=3, sticky='ew')
 
     def master_password_section(self):
         """
         Create and place the master password input section:
         label, entry field, and unlock button.
         """
-        self.password_label = tk.Label(self.root,
-                                       text='Enter Master Password:',
-                                       font=self.font_label)
+        password_frame = tk.Frame(self.root)
+        password_frame.grid(row=1, column=0, columnspan=3, pady=20)
 
-        self.password_entry = tk.Entry(self.root,
-                                       show='*',
-                                       font=self.font_entry)
+        label = tk.Label(password_frame, text="Enter Master Password:", font=self.font_label)
+        label.pack(side='left', padx=(0, 10))
 
-        self.unlock_button = tk.Button(self.root,
-                                       text="Unlock Vault",
-                                       command=self.unlock_vault)
+        self.password_entry = tk.Entry(password_frame, show='*', font=self.font_entry, width=30)
+        self.password_entry.pack(side='left')
 
-        self.password_label.grid(row=1, column=0, padx=(20, 2), pady=10, sticky='e')
-        self.password_entry.grid(row=1, column=1, padx=2, pady=10, sticky='ew')
-        self.unlock_button.grid(row=1, column=2, padx=(2, 10), pady=10, sticky='w')
-
-        self.password_entry.focus_set()
+        self.unlock_button = tk.Button(password_frame, text="Unlock Vault", font=self.font_entry, command=self.unlock_vault)
+        self.unlock_button.pack(side='left', padx=10)
 
     def unlock_vault(self):
         """
@@ -114,76 +112,85 @@ class PasswordManager:
         return False
 
     def credentials_table_custom(self):
-        self.headers = ['Website', 'Username', 'Password', 'Actions']
+        headers = ['Website', 'Username', 'Password', 'Actions']
+        
+        # Container for the table
+        self.table_frame = tk.Frame(self.root, bg="#ffffff", bd=2, relief='groove')
+        self.table_frame.grid(row=3, column=0, columnspan=3, padx=20, pady=20, sticky="nsew")
 
-        self.table_container = tk.Frame(self.root, bd=2, relief='solid', width=800, height=300)
-        self.table_container.grid(row=2, column=1, pady=40)
+        # Table header
+        for col, header in enumerate(headers):
+            label = tk.Label(self.table_frame, text=header, font=self.font_label, bg="#f0f0f0")
+            label.grid(row=0, column=col, sticky='nsew')
 
-        self.generate_table_header()
-        self.generate_table_data()
+        self.table_frame.grid_columnconfigure(0, weight=1)
+        self.table_frame.grid_columnconfigure(1, weight=1)
+        self.table_frame.grid_columnconfigure(2, weight=1)
+        self.table_frame.grid_columnconfigure(3, weight=1)
 
-    def add_vertical_separator(self, col, row):
-        if col < len(self.headers) - 1:
-            v_separator = ttk.Separator(self.table_container, orient='vertical')
-            v_separator.grid(row=row, column=col * 2 + 1, sticky='ns', pady=5)
+        # Table data
+        self.password_labels = {}
+        print(len(self.data))
+        for idx, entry in enumerate(self.data, start=1):
+            bg_color = "#ffffff"
 
-    def generate_table_header(self):
-        for col, header in enumerate(self.headers):
-            header = tk.Label(self.table_container, text=header, font=self.font_label, bd=2)
-            header.grid(row=0, column=col * 2, padx=10, sticky='')
+            website = tk.Label(self.table_frame, text=entry['website'], font=self.font_entry, bg=bg_color)
+            username = tk.Label(self.table_frame, text=entry['username'], font=self.font_entry, bg=bg_color)
+            password_label = tk.Label(self.table_frame, text="******", font=self.font_entry, bg=bg_color)
 
-            self.add_vertical_separator(col, 0)
+            website.grid(row=idx, column=0, sticky='nsew')
+            username.grid(row=idx, column=1, sticky='nsew')
+            password_label.grid(row=idx, column=2, sticky='nsew')
 
-    def generate_table_data(self):
-        for row_idx, row in enumerate(self.data, start=1):
-            for col_index, key in enumerate(row):
-                value = row[key]
-                display_value = '******' if key == 'password' else value
-                data_label = tk.Label(self.table_container,
-                                      text=display_value,
-                                      font=self.font_entry,
-                                      anchor='w')
-                data_label.grid(row=row_idx, column=col_index * 2, padx=10, pady=5, sticky='')
-                if key == 'password':
-                    self.password_labels[row_idx] = (data_label, value)
-                self.add_vertical_separator(col_index, row_idx)
-            self.add_reveal_button(row_idx, col_index)
-            self.add_copy_button(row_idx, col_index)
+            # Save reference for toggling
+            self.password_labels[idx] = (password_label, entry['password'])
 
-    def add_reveal_button(self, row_idx, col_index):
-        self.reveal_button = ttk.Button(self.table_container,
-                                        text="Show",
-                                        cursor="hand2",
-                                        command=lambda r=row_idx: self.toggle_password(r))
-        reveal_btn_col = len(self.headers) + col_index
-        self.reveal_button.grid(row=row_idx, column=reveal_btn_col, sticky="nsew", padx=5, pady=5)
-        self.reveal_buttons[row_idx] = self.reveal_button
+            # Action buttons
+            action_frame = tk.Frame(self.table_frame, bg=bg_color)
+            action_frame.grid(row=idx, column=3, pady=1)
+
+            edit_btn = ttk.Button(action_frame, text="Edit", width=8, command=lambda i=idx: self.copy_password(i))
+            reveal_btn = ttk.Button(action_frame, text="Reveal", width=8, command=lambda i=idx: self.toggle_password(i))
+            copy_btn = ttk.Button(action_frame, text="Copy", width=8, command=lambda i=idx: self.copy_password(i))
+
+            edit_btn.pack(side="left", padx=2)
+            reveal_btn.pack(side="left", padx=2)
+            copy_btn.pack(side="left", padx=2)
 
     def toggle_password(self, row_idx):
         label, actual_password = self.password_labels[row_idx]
-        button = self.reveal_buttons[row_idx]
-
-        if label.cget("text").startswith("*"):
+        current_text = label.cget("text")
+        if current_text == "******":
             label.config(text=actual_password)
-            button.config(text="Hide")
         else:
             label.config(text="******")
-            button.config(text="Show")
-
-    def add_copy_button(self, row_idx, col_index):
-        button = ttk.Button(self.table_container,
-                            text="Copy",
-                            cursor="hand2",
-                            command=lambda r=row_idx: self.copy_password(r))
-        btn_col = (len(self.headers) + col_index) + 1
-        button.grid(row=row_idx, column=btn_col, sticky="nsew", padx=5, pady=5)
 
     def copy_password(self, row_idx):
         _, actual_password = self.password_labels[row_idx]
         self.root.clipboard_clear()
         self.root.clipboard_append(actual_password)
         self.root.update()
-        messagebox.showinfo("Copied", "Password copied to clipboard")
+        messagebox.showinfo("Copied", "Password copied to clipboard.")
+
+    def add_new_section(self):
+        # Create a frame to hold the buttons
+        self.button_frame = tk.Frame(self.root)
+        self.button_frame.grid(row=2, column=0, columnspan=3, pady=10)
+
+        # "Add New Entry" button
+        self.add_link = tk.Button(self.button_frame,
+                                  text="[+] Add New Entry",
+                                  font=self.font_entry,
+                                  command=self.unlock_vault)
+        self.add_link.pack(side='left', padx=20)
+
+        # "Exit" button
+        self.exit_link = tk.Button(self.button_frame,
+                                   text="Exit",
+                                   font=self.font_entry,
+                                   command=self.root.quit)
+        self.exit_link.pack(side='left', padx=10)
+
 
     def run_main_event(self):
         """
